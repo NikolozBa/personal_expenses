@@ -55,7 +55,7 @@ class LoginScreen extends StatelessWidget {
                       if (_formKey.currentState!.validate()){
                         DatabaseHelper.username = loginController.text;
                         BlocProvider.of<ExpensesCubit>(context).reset();
-                        Navigator.pushNamed(context, "/home-screen");
+                        Navigator.pushNamed(context, "/home");
                       }
                     },
                     child: Text("LOGIN", style: TextStyle(fontSize: 20),)

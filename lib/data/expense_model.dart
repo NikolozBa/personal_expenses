@@ -1,16 +1,16 @@
 class Expense {
   String? title;
-  double? expenseAmount;
+  double? amount;
   String? description;
-  DateTime? date;
-  DateTime? dateAdded;
+  DateTime? expenseDate;
+  DateTime? creationDate;
 
   Expense(
       {required this.title,
-      required this.expenseAmount,
+      required this.amount,
       required this.description,
-      required this.date,
-      required this.dateAdded});
+      required this.expenseDate,
+      required this.creationDate});
 
   // Expense.fromJson(Map<String, dynamic> json) {
   //   title = json['title'];
@@ -23,20 +23,20 @@ class Expense {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
-    data['expenseAmount'] = this.expenseAmount;
+    data['amount'] = this.amount;
     data['description'] = this.description;
-    data['date'] = this.date;
-    data['dateAdded'] = this.dateAdded;
+    data['expenseDate'] = this.expenseDate;
+    data['creationDate'] = this.creationDate;
     return data;
   }
 
   Map<String, dynamic> toJsonUpdate() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['title'] = this.title;
-    data['expenseAmount'] = this.expenseAmount;
+    data['amount'] = this.amount;
     data['description'] = this.description;
-    data['date'] = this.date;
-    //data['dateAdded'] = this.dateAdded;
+    data['expenseDate'] = this.expenseDate;
+    //data['creationDate'] = this.creationDate;
     return data;
   }
 }

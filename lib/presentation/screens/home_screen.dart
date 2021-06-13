@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:personal_expenses/data/database_helper.dart';
 import 'package:personal_expenses/data/expense_model.dart';
 import 'package:personal_expenses/logic/cubits/expenses_cubit.dart';
@@ -7,7 +9,8 @@ import 'package:personal_expenses/logic/cubits/expenses_cubit.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  String? currentOrder = "dateAdded";
+  String currentOrder = "creationDate";
+  final format = DateFormat("dd/MM/yy");
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class HomeScreen extends StatelessWidget {
                 Divider(),
                 TextButton(
                   onPressed: () {
-                    currentOrder = "dateAdded";
+                    currentOrder = "creationDate";
                     BlocProvider.of<ExpensesCubit>(context).reset();
                     Navigator.pop(context);
                   },
@@ -40,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                 Divider(),
                 TextButton(
                   onPressed: () {
-                    currentOrder = "date";
+                    currentOrder = "expenseDate";
                     BlocProvider.of<ExpensesCubit>(context).reset();
                     Navigator.pop(context);
                   },
@@ -83,24 +86,25 @@ class HomeScreen extends StatelessWidget {
           if (state is ExpensesError) {
             showDialog(
               context: context,
-              builder: (_) => AlertDialog(
-                title: Text("ERROR"),
-                content: Text(state.errorMessage),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      return Navigator.pop(context);
-                    },
-                    child: Text("OK"),
-                  )
-                ],
-              ),
+              builder: (_) =>
+                  AlertDialog(
+                    title: Text("ERROR"),
+                    content: Text(state.errorMessage),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          return Navigator.pop(context);
+                        },
+                        child: Text("OK"),
+                      )
+                    ],
+                  ),
             );
           }
         },
         builder: (context, state) {
           if (state is ExpensesInitial) {
-            BlocProvider.of<ExpensesCubit>(context).getExpenses(order: currentOrder);
+            BlocProvider.of<ExpensesCubit>(context).getExpenses(currentOrder);
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -108,56 +112,74 @@ class HomeScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: state.expenses.docs.length,
               itemBuilder: (context, index) {
+                QueryDocumentSnapshot expense = state.expenses.docs[index];
+
                 return GestureDetector(
-                  onTap: (){
-                    Navigator.pushNamed(context, "/details-screen", arguments: state.expenses.docs[index]);
+                  onTap: () {
+                    Navigator.pushNamed(
+                        context, "/details", arguments: expense);
                   },
-                  onLongPress: (){
-                    Navigator.pushNamed(context, "/edit-expense", arguments: state.expenses.docs[index]);
+                  onLongPress: () {
+                    Navigator.pushNamed(
+                        context, "/edit-expense", arguments: expense);
                   },
                   child: Card(
                     child: Padding(
-                      padding: EdgeInsets.all(20),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            padding: EdgeInsets.symmetric(vertical: 8),
                             child: Text(
-                              state.expenses.docs[index]["title"],
+                              expense["title"],
                               style: TextStyle(
                                   fontSize: 25
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+
                           Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
+                            padding: EdgeInsets.only(top: 8, bottom: 15),
+                            //width: double.infinity,
                             child: Text(
-                              DateTime.fromMillisecondsSinceEpoch(state.expenses.docs[index]["date"].seconds * 1000).toString(),
+                              expense["description"],
                               style: TextStyle(
-                                  fontSize: 25
+                                fontSize: 18,
+                                color: Colors.black54
                               ),
-                            ),
-                          ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),),
+
+
                           Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
-                            child: Text(
-                              //state.expenses.docs[index]["dateAdded"].seconds.toString(),
-                              DateTime.fromMillisecondsSinceEpoch(state.expenses.docs[index]["dateAdded"].seconds * 1000).toString(),
-                              style: TextStyle(
-                                  fontSize: 25
-                              ),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "\$" + expense["amount"].toString(),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                    color: Colors.blue
+                                  ),
+                                ),
+
+                                Text(
+                                  format.format(DateTime.fromMillisecondsSinceEpoch(
+                                      expense["expenseDate"].seconds * 1000)),
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                    color: Colors.black45
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 20),
-                            child: Text(
-                              state.expenses.docs[index]["expenseAmount"].toString(),
-                              style: TextStyle(
-                                  fontSize: 18
-                              ),
-                            ),
-                          ),
+
                         ],
                       ),
                     ),

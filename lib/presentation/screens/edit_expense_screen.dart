@@ -17,7 +17,7 @@ class EditExpense extends StatelessWidget {
   final TextEditingController title = TextEditingController();
   final TextEditingController amount = TextEditingController();
   final TextEditingController description = TextEditingController();
-  final TextEditingController date = TextEditingController();
+  final TextEditingController expenseDate = TextEditingController();
 
   final format = DateFormat("dd/MM/yy");
   final now = DateTime.now();
@@ -26,9 +26,9 @@ class EditExpense extends StatelessWidget {
   Widget build(BuildContext context) {
 
     title.text = expense["title"];
-    amount.text = expense["expenseAmount"].toString();
+    amount.text = expense["amount"].toString();
     description.text = expense["description"];
-    date.text = format.format(DateTime.fromMillisecondsSinceEpoch(expense["date"].seconds * 1000));
+    expenseDate.text = format.format(DateTime.fromMillisecondsSinceEpoch(expense["expenseDate"].seconds * 1000));
 
 
     return Scaffold(
@@ -120,7 +120,7 @@ class EditExpense extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: DateTimeField(
                       format: format,
-                      controller: date,
+                      controller: expenseDate,
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.calendar_today),
                         contentPadding: EdgeInsets.symmetric(
@@ -152,10 +152,10 @@ class EditExpense extends StatelessWidget {
                               DatabaseHelper.updateExpense(
                                 data: Expense(
                                     title: title.text,
-                                    expenseAmount: double.parse(amount.text),
+                                    amount: double.parse(amount.text),
                                     description: description.text,
-                                    date: format.parse(date.text),
-                                    dateAdded: now
+                                    expenseDate: format.parse(expenseDate.text),
+                                    creationDate: now
                                 ),
                                 ID: expense.id
                               );

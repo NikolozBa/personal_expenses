@@ -19,18 +19,9 @@ class DatabaseHelper{
   }
 
 
-  static Future<QuerySnapshot> fetchExpenses({String? order}) async{
+  static Future<QuerySnapshot> fetchExpenses(String order) async{
 
-    switch(order){
-      case "dateAdded":
-        return users.doc(username).collection("expenses").orderBy("dateAdded", descending: true).get();
-      case "date":
-        return users.doc(username).collection("expenses").orderBy("date", descending: true).get();
-      case "amount":
-        return users.doc(username).collection("expenses").orderBy("expenseAmount", descending: true).get();
-      default:
-        return users.doc(username).collection("expenses").orderBy("dateAdded", descending: true).get();
-    }
+    return users.doc(username).collection("expenses").orderBy(order, descending: true).get();
 
   }
 

@@ -14,15 +14,14 @@ class AddExpense extends StatelessWidget {
   final TextEditingController title = TextEditingController();
   final TextEditingController amount = TextEditingController();
   final TextEditingController description = TextEditingController();
-  final TextEditingController date = TextEditingController();
+  final TextEditingController expenseDate = TextEditingController();
 
   final format = DateFormat("dd/MM/yyyy");
   final now = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
-
-    date.text = format.format(now);
+    expenseDate.text = format.format(now);
 
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +109,7 @@ class AddExpense extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 10),
                     child: DateTimeField(
                       format: format,
-                      controller: date,
+                      controller: expenseDate,
                       decoration: InputDecoration(
                         suffixIcon: Icon(Icons.calendar_today),
                         contentPadding: EdgeInsets.symmetric(
@@ -126,8 +125,6 @@ class AddExpense extends StatelessWidget {
                             initialDate: currentValue ?? DateTime.now(),
                             lastDate: DateTime(2030));
                       },
-
-
                     ),
                   ),
                   Padding(
@@ -138,15 +135,13 @@ class AddExpense extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-
                               DatabaseHelper.addExpense(
                                 Expense(
-                                  title: title.text,
-                                  expenseAmount: double.parse(amount.text),
-                                  description: description.text,
-                                  date: format.parse(date.text),
-                                  dateAdded: now
-                                ),
+                                    title: title.text,
+                                    amount: double.parse(amount.text),
+                                    description: description.text,
+                                    expenseDate: format.parse(expenseDate.text),
+                                    creationDate: now),
                               );
                               BlocProvider.of<ExpensesCubit>(context).reset();
                               Navigator.pop(context);

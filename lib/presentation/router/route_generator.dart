@@ -12,11 +12,11 @@ class RouteGenerator{
     switch(settings.name){
       case "/":
         return MaterialPageRoute(builder: (_) => LoginScreen());
-      case "/home-screen":
+      case "/home":
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case "/add-expense":
         return MaterialPageRoute(builder: (_) => AddExpense());
-      case "/details-screen":
+      case "/details":
         return MaterialPageRoute(builder: (_) => DetailsScreen(expense: settings.arguments as QueryDocumentSnapshot));
       case "/edit-expense":
         return MaterialPageRoute(builder: (_) => EditExpense(expense: settings.arguments as QueryDocumentSnapshot));
